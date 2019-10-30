@@ -41,7 +41,7 @@ class RegretMinimization(EquilibriumAlgorithm):
         EquilibriumAlgorithm.__init__(self, game, name=self._name)
 
         self._step = step
-        self._alpha = step.next()
+        self._alpha = next(step)
         self._weight = self._alpha
 
     def iterate(self, num_iterations=1):
@@ -59,7 +59,7 @@ class RegretMinimization(EquilibriumAlgorithm):
 
             self._rm_y(u_y)
 
-            self._alpha = self._step.next()
+            self._alpha = next(self._step)
             self._weight += self._alpha
             alpha = self._alpha / self._weight
             self._x = self._game.domain(0).combine(self._x, alpha,
