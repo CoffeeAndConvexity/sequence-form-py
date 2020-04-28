@@ -7,6 +7,7 @@ import sys
 import numpy as np
 
 from extensive_form_game import blsp_reader
+from extensive_form_game import libgg_reader
 from poker import kuhn
 from poker import leduc
 from poker import nlhe_river
@@ -53,7 +54,7 @@ parser.add_argument(
     '--game',
     default='kuhn',
     dest='game',
-    help='Game to solve: kuhn, river, leduc, path to .blsp file')
+    help='Game to solve: kuhn, river, leduc, path to .blsp file, path to .capnp file')
 parser.add_argument(
     '-r',
     '--num_ranks',
@@ -190,6 +191,11 @@ elif args.game == 'leduc':
         prox_scalar=args.prox_scalar)
 elif '.blsp' in args.game:
     game = blsp_reader.make_efg_from_file(
+        args.game,
+        prox_infoset_weights=args.prox_infoset_weights,
+        prox_scalar=args.prox_scalar)
+elif '.capnp' in args.game:
+    game = libgg_reader.make_efg_from_file(
         args.game,
         prox_infoset_weights=args.prox_infoset_weights,
         prox_scalar=args.prox_scalar)

@@ -25,7 +25,7 @@ class TreeplexDomain:
             if parent[i] > begin[i]:
                 self._forward_order = True
             assert parent[i] != begin[i]
-            assert begin[i] < end[i]
+            assert begin[i] <= end[i]
         if self._forward_order:
             for i in range(0, len(begin)):
                 assert parent[i] > begin[i]
