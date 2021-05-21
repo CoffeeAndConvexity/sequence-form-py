@@ -1,4 +1,3 @@
-sequence_form_py
 
 # Prerequisites
 

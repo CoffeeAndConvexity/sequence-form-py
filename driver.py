@@ -37,6 +37,9 @@ algs = {
     'CFR+': lambda args: eqm_regret.regret_minimization_initializer(
         matrix_regret.regret_matching_plus_initializer(),
         alternate=True, linear_averaging=True, name='CFR+'),
+    'CBA+': lambda args: eqm_regret.regret_minimization_initializer(
+        matrix_regret.conic_blackwell_plus_initializer(),
+        alternate=True, linear_averaging=True, name='CBA+'),
     'RM+_LINEAR': lambda args: eqm_regret.regret_minimization_initializer(
         matrix_regret.regret_matching_plus_initializer(),
         alternate=False, linear_averaging=True, name='CFR+'),

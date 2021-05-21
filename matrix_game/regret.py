@@ -81,6 +81,35 @@ class RegretMatchingPlus:
         return 'RegretMatching+'
 
 
+class ConicBlackwellPlus:
+    def __init__(self, dimension):
+        self._dimension = dimension
+        self.strategy = np.ones(dimension) / dimension
+        self.regret = np.zeros(dimension)
+        self.regret_hat = 0.0
+
+    def __call__(self, utility):
+        value = np.dot(self.strategy, utility)
+
+        # Replace commented out code with something that makes self.strategy equal to the CBA+ choice
+        # self.regret += utility
+        # self.regret -= value
+
+        # np.maximum(self.regret, 0, out=self.strategy)
+        # np.maximum(self.regret, 0, out=self.regret)
+
+        # Z = np.sum(self.strategy)
+        # if Z <= 0.0:
+        #     self.strategy.fill(1.0)
+        #     Z = self._dimension
+
+        # self.strategy /= Z
+
+        return value
+
+    def __str__(self):
+        return 'ConicBlackwell+'
+
 def regret_matching_bound(dimension, payoff, num_iterations):
     return payoff * np.sqrt(dimension * num_iterations)
 
@@ -102,5 +131,11 @@ def regret_matching_initializer():
 def regret_matching_plus_initializer():
     def init(domain):
         return RegretMatchingPlus(domain.dimension())
+
+    return init
+
+def conic_blackwell_plus_initializer():
+    def init(domain):
+        return ConicBlackwellPlus(domain.dimension())
 
     return init
