@@ -7,7 +7,7 @@ import sys
 import numpy as np
 
 from extensive_form_game import blsp_reader
-from extensive_form_game import libgg_reader
+from extensive_form_game import libef_reader # this line can be commented in in order to get the libgg reader
 from poker import kuhn
 from poker import leduc
 from poker import nlhe_river
@@ -194,8 +194,8 @@ elif '.blsp' in args.game:
         args.game,
         prox_infoset_weights=args.prox_infoset_weights,
         prox_scalar=args.prox_scalar)
-elif '.capnp' in args.game:
-    game = libgg_reader.make_efg_from_file(
+elif '.game' in args.game: # this if condition can be commented in for the libgg reader
+    game = libef_reader.make_efg_from_file(
         args.game,
         prox_infoset_weights=args.prox_infoset_weights,
         prox_scalar=args.prox_scalar)

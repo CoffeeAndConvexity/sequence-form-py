@@ -1,8 +1,9 @@
 sequence_form_py
 
-================
+# Prerequisites
 
-The code currently uses python 2
+- capnp and pycapnp: I recommend installing capnp first (see (here)[https://capnproto.org/install.html]), and then (pycapnp)[https://github.com/capnproto/pycapnp]
+- python 3.7+
 
 ================
 
@@ -12,8 +13,15 @@ Example of how to run the code:
 
 This computes a  solution using EGT with aggressive stepsizing and CFR+
 
+Here's an example of how to solve a game in the .game capcnp format:
+
+`python driver.py -a cfr+ -t 1000 --num_output 10 -g ~/Documents/data/efg/games/leduc_2pl_3ranks.game`
+
 ================
 
 authors on initial version of this code:
- - Christian Kroer (ckroer@cs.cmu.edu)
+ - Christian Kroer (christian.kroer@columbia.edu)
  - Kevin Waugh (waugh@cs.cmu.edu)
+
+other contributors:
+- Gabriele Farina
