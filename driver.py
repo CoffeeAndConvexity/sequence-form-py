@@ -4,6 +4,7 @@ import logging
 import argparse
 import math
 import sys
+import time
 import numpy as np
 
 from extensive_form_game import blsp_reader
@@ -167,7 +168,7 @@ init_gap = args.init_gap
 init_update_x = args.init_update_x
 allowed_eps_increase = args.allowed_eps_increase
 if to_csv:
-    print('iters,gradients,eps,profile_val,algorithm')
+    print('iters,gradients,eps,profile_val,algorithm,time')
 elif debug:
     logging.getLogger().setLevel(logging.DEBUG)
 else:
@@ -216,7 +217,6 @@ for alg in algs_arg:
         algs_to_run += [algs[alg](args)]
 
 alg_names = []
-# bounds = []
 
 if log_scale:
     # print_seq = np.logspace(
@@ -227,10 +227,12 @@ if log_scale:
 else:
     print_seq = np.linspace(0, num_iterations, num_outputs, dtype=int)
 for alg_idx, alg in enumerate(algs_to_run):
+    t0 = time.time() # start timer
     opt = alg(game)
+    total_time = time.time() - t0
     if not to_csv:
         print(opt)
-        print('iters\tgrads\teps\t\tprofile_val')
+        print('iters\tgrads\teps\t\tprofile_val\ttime')
     eps_initial = opt.epsilon()
     profile_val_initial = opt.profile_value()
 
@@ -248,18 +250,22 @@ for alg_idx, alg in enumerate(algs_to_run):
         else:
             delta = print_seq[0]
 
+        t0 = time.time()
         opt.iterate(delta)
+        total_time += time.time() - t0
         eps = opt.epsilon()
         profile_val = opt.profile_value()
         if to_csv:
-            print('{iters},{gradients},{eps},{profile_val},{algorithm}'.format(
+            print('{iters},{gradients},{eps},{profile_val},{algorithm},{time}'.format(
                 iters=print_seq[i],
                 gradients=opt.gradient_computations(),
                 eps=eps,
                 profile_val=profile_val,
-                algorithm=opt, ))
+                algorithm=opt,
+                time=total_time
+            ))
         elif pretty_print:
-            if str(opt) == 'ExcessiveGapTechnique':
+            if False and str(opt) == 'ExcessiveGapTechnique':
                 print(
                     '{iters}\t{grads}\t{eps:.6f}\t{profile_val:.6f}\t{egv:.6f}'.
                     format(
@@ -269,14 +275,16 @@ for alg_idx, alg in enumerate(algs_to_run):
                         profile_val=profile_val,
                         egv=opt.excessive_gap(), ))
             else:
-                print('{iters}\t{grads}\t{eps:.6f}\t{profile_val:.6f}'.format(
+                print('{iters}\t{grads}\t{eps:.6f}\t{profile_val:.6f}\t{time:.6f}'.format(
                     iters=print_seq[i],
                     grads=opt.gradient_computations(),
                     eps=eps,
-                    profile_val=profile_val, ))
+                    profile_val=profile_val,
+                    time=total_time
+                ))
         else:
             print(print_seq[i], opt.gradient_computations(), eps, profile_val)
-        print(t, opt.gradient_computations(), eps, file=gnuplot_out)
+        print(t, opt.gradient_computations(), eps, total_time, file=gnuplot_out)
         if eps < eps_threshold:
             break
 
