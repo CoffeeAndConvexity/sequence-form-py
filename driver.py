@@ -143,7 +143,7 @@ parser.add_argument(
 parser.add_argument(
     '--pretty_print',
     action='store_true',
-    default=False,
+    default=True,
     dest='pretty_print',
     help='whether to output in CSV format')
 parser.add_argument(
