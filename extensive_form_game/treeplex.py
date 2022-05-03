@@ -280,8 +280,6 @@ class TreeplexEntropyProx:
         inner_prod = self.gradient(x_center).dot(
             self._treeplex.sequence_form(x) -
             self._treeplex.sequence_form(x_center))
-        # print("dgf x: {}, dgf center: {}, inner_prod: {}".format(
-        #     dgf_x, dgf_center, inner_prod))
         return dgf_x - dgf_center - inner_prod
 
     def center(self):
@@ -295,51 +293,7 @@ class TreeplexEntropyProx:
 
     def __call__(self, alpha, g, beta, y):
         assert self._treeplex.is_behavioral_form(y)
-        # print("reduced g: ", alpha * g - self.gradient(y, beta))
         return self.smooth_br(1., alpha * g - self.gradient(y, beta), beta)
-        z = np.zeros(self._dimension)
-        z[self._treeplex.root_sequence()] = 1.0
-        g *= alpha
-        prox_val = g[self._treeplex.root_sequence()]
-        for i in self._treeplex.infoset_traversal():
-            begin = self._begin[i]
-            end = self._end[i]
-            parent = self._parent[i]
-            dgf_weight = beta * self._weights[i]
-
-            offset = np.min(g[begin:end])
-
-            z[begin:end] = np.exp(-(1.0 / dgf_weight) *
-                                  (g[begin:end] - offset))
-            z[begin:end] *= y[begin:end]
-
-            Z = np.sum(z[begin:end])
-            z[begin:end] /= Z
-
-            best_idx = 0
-            best_min_zy = 0
-            min_z = min_y = 0
-            for idx in range(begin, end):
-                if min(z[idx], y[idx]) > best_min_zy:
-                    best_idx = idx
-                    best_min_zy = min(z[idx], y[idx])
-                    min_z = z[idx]
-                    min_y = y[idx]
-
-            try:
-                lambda_val = g[best_idx] + dgf_weight * np.log(min_z / min_y)
-            except Exception as e:
-                print("violating z: ", z[begin:end])
-                print("violating y: ", y[begin:end])
-                raise e
-
-            if parent != self._treeplex.root_sequence():
-                g[parent] += lambda_val
-            else:
-                prox_val += lambda_val
-
-        assert self._treeplex.is_behavioral_form(z)
-        return prox_val, z
 
     # solves:
     # argmin_{x\in\Delta} alpha*g'x + beta*d(x)
