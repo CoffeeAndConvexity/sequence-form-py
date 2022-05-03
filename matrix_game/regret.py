@@ -92,45 +92,38 @@ class ConicBlackwellPlus:
 
     # solving for y_tilde using trick
     def solve_for_y_tilde_1(self,u_tilde,u_hat):
-
-        def function(x):
+        def fn(x):
             loc_vec = u_hat+x*np.ones(len(u_hat))
             return x + np.sum(np.where(loc_vec>0,loc_vec,0))-u_tilde
-        sol=fsolve(function,u_tilde)
-        sol=sol[0]
 
+        sol=fsolve(fn,u_tilde)
+        sol=sol[0]
         return sol
 
     # solving for y_tilde using binary search
     def solve_for_y_tilde_2(self,u_tilde,u_hat):
-
-        def function(z):
+        def fn(z):
             loc_vec = u_hat+z*np.ones(len(u_hat))
             loc_vec=np.where(loc_vec>0,loc_vec,0)
             res=((z-u_tilde)**2) + ((np.linalg.norm(loc_vec))**2)
             return res
 
-        sol=minimize_scalar(function,method='Brent',tol=0.0000001)
+        sol=minimize_scalar(fn,method='Brent',tol=0.0000001)
         sol=sol.x
         return sol
 
     # compute the projection onto the cone
     def projection_on_cone(self,u_loc_tilde,u_loc_hat):
-
         # computing optimal y_tilde
         y_tilde_star = self.solve_for_y_tilde_1(u_loc_tilde,u_loc_hat)
-
         # proj_u_tilde = u_tilde - y_tilde
         proj_u_tilde = u_loc_tilde - y_tilde_star
-
         # proj_u_hat = (u_hat+y_tilde*e)^+
         u_loc=u_loc_hat+y_tilde_star*np.ones(len(u_loc_hat))
         proj_u_hat =np.where(u_loc>0,u_loc,0)
-
         return proj_u_hat,proj_u_tilde
 
     def __call__(self, utility):
-
         value = np.dot(self.strategy, utility)
 
         # intermediate value for u_tilde and u_hat
